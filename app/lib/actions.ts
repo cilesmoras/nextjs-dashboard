@@ -7,8 +7,8 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
-export type State = {
-  errors: {
+export type InvoiceState = {
+  errors?: {
     customerId?: string[];
     amount?: string[];
     status?: string[];
@@ -32,7 +32,10 @@ const FormSchema = z.object({
 
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
 
-export async function createInvoice(prevState: State, formData: FormData) {
+export async function createInvoice(
+  prevState: InvoiceState,
+  formData: FormData,
+) {
   // Validate form using Zod
   const validatedFields = CreateInvoice.safeParse({
     customerId: formData.get('customerId'),
@@ -73,7 +76,7 @@ const UpdateInvoice = FormSchema.omit({ id: true, date: true });
 
 export async function updateInvoice(
   id: string,
-  prevState: State,
+  prevState: InvoiceState,
   formData: FormData,
 ) {
   const validatedFields = UpdateInvoice.safeParse({
@@ -125,7 +128,7 @@ export async function authenticate(
   try {
     await signIn('credentials', formData);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
